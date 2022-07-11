@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 pub const MAX_ADDRESS_LENGTH: usize = 255;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AddressState {
     Good { address: String },
     NotGood { error1: String, error2: String },
@@ -33,8 +33,8 @@ pub fn app() -> Html {
     let onclick = Callback::from(move |_| {
         let input = input_ref.cast::<HtmlInputElement>().unwrap();
         let address = input.value();
-        let check1 = encode_decode(&address); // Will be Address if check passes, error otherwise
-        let check2 = verify_length(&address); // Will be Address if check passes, error otherwise
+        let check1 = encode_decode(&address); 
+        let check2 = verify_length(&address); 
 
         if check1 == check2 {
             let post = PostMessage {
@@ -42,24 +42,41 @@ pub fn app() -> Html {
                 address: check2,
             };
 
+            let zz = JsValue::from_serde(&post).unwrap();
+            let pyr = zz.clone();
+
             if let Ok(y) = JsValue::from_serde(&post) {
-                //long block;
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
-                    .method(Method::POST)
-                    .body(Some(y as JsValue))
-                    .credentials(RequestCredentials::Include)
-                    .mode(RequestMode::Cors)
-                    .header("??content-type??", "application/json");
-                wasm_bindgen_futures::spawn_local(async {
+
+                    .method(Method::POST) // <<
+                    .body(zz) // << 413
+
+
+                    .header("Content-type", "application/json"); // <<< 400
+
+
+                    //.method(Method::POST)
+                    //.body(zz as JsValue);
+                    //.credentials(RequestCredentials::Include)
+                    //.mode(RequestMode::Cors);
+                    //.header("??content-type??", "application/json");
+                wasm_bindgen_futures::spawn_local( async move {
                     opts.send().await.unwrap();
                 });
-                check_state.set(Some(AddressState::Good { address }));
-            } else {
-                check_state.set(Some(AddressState::NotGood {
-                    error1: "Parse Error".to_string(),
-                    error2: "Parse Error".to_string(),
-                }));
+
+
+                web_sys::console::log_1(&pyr);
+                web_sys::console::log_1(&"eeeeeeeee".into());
+
+
+                //check_state.set(Some(Address::Good {address}));
             }
+
+        } else {
+
+            web_sys::console::log_1(&"hello".into());
+            //check_state.set(Some(AddressState::NotGood {error1: "Parse Error".to_string(), error2: "Parse Error".to_string()}));
+            
         };
     });
 
