@@ -2,12 +2,17 @@ h1 {
     z-index: 1000;
     color: rgb(237, 237, 237);
     font-size: 50px;
-    margin-top: 40px;
     font-family: 'Trebuchet MS', sans-serif;
     font-weight: bolder;
     text-align: center;
     text-shadow: 0px 0px 5px rgba(0, 0, 0), 0px 0px 30px rgba(0, 0, 0, 0.39);
     align-items: center;
+    margin: 0;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
 }
 
@@ -15,12 +20,18 @@ h2 {
     z-index: 200;
     color: rgb(223, 223, 223);
     font-size: 20;
-    margin-top: 100;
     font-family: 'Trebuchet MS', sans-serif;
     font-weight: lighter;
     text-align: center;
     text-shadow: 0px 0px 5px rgba(0, 0, 0), 0px 0px 30px rgba(0, 0, 0, 0.39);
     align-items: center;
+
+    margin: 0;
+    position: absolute;
+    top: 32%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .container {
@@ -30,7 +41,13 @@ h2 {
     column-gap: 20px;
     align-items: center;
     justify-content: center;
-    margin-top: 10%;
+
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .response_container {
@@ -57,10 +74,12 @@ h2 {
     margin: auto;
     text-align: center;
     backdrop-filter: blur(10px);
+
+    
 }
 
 .button1:hover {
-    box-shadow: 0 0px 16px 0 #f0827d;
+    box-shadow: 0 0px 24px 0 #f0837dcb, 0 0px 16px 0 #f0827d;
 }
 
 input[type=text] {
@@ -79,7 +98,7 @@ input[type=text] {
 }
 
 input[type=text]:focus {
-    box-shadow: 0 0px 16px 0 #f0827d;
+    box-shadow: 0 0px 24px 0 #f0837dcb, 0 0px 16px 0 #f0827d;
 }
 
 input[type=text]::placeholder {
@@ -89,7 +108,7 @@ input[type=text]::placeholder {
 
 
 body {
-    background: rgb(79, 79, 79);
+    background: rgb(20, 20, 20);
     background-size: cover;
 }
 
@@ -101,9 +120,16 @@ body {
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: rgb(202, 202, 202);
-    color: rgb(0, 0, 0);
+    background-color: #f0827d;
+    color: rgb(255, 255, 255);
     text-align: center;
+    text-shadow: 0px 0px 5px #000000;
+}
+
+a {
+    color: #ffffff;
+    text-shadow: 0 0 10px black, 0 0 5px black;
+    font-weight: bolder;
 }
 
 
