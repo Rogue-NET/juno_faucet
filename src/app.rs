@@ -46,9 +46,6 @@ pub fn app() -> Html {
                 address: check2,
             };
 
-            let zz = JsValue::from_serde(&post).unwrap();
-            let pyr = zz.clone();
-
             if let Ok(y) = JsValue::from_serde(&post) {
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
                     .json(&post).unwrap()
