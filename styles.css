@@ -94,6 +94,18 @@ body {
 }
 
 
+.footer {
+    position: fixed;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-weight: lighter;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(202, 202, 202);
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
 
 
 

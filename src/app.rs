@@ -94,6 +94,13 @@ pub fn app() -> Html {
             </div>
             <body>
             </body>
+            <div class ="footer">
+                <p>{ "Powered by:  "}
+                <a href="https://junonetwork.io/">{ "Juno Network"}</a>
+                { " + " }
+                <a href="https://github.com/cosmos/cosmjs">{ "cosmjs" }</a>
+                </p>
+            </div>
         
            
         </> 
