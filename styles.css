@@ -71,7 +71,6 @@ h2 {
     transition-duration: 300ms;
     width: 100px;
     height: 40px;
-    margin: auto;
     text-align: center;
     backdrop-filter: blur(10px);
 
@@ -93,7 +92,6 @@ input[type=text] {
     border-radius: 7px;
     box-sizing: border-box;
     outline: None;
-    margin: auto;
     backdrop-filter: blur(10px);
 }
 

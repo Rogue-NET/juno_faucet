@@ -65,7 +65,7 @@ pub fn app() -> Html {
                         if rez == "OK".to_string() {
                             check_state_clone.set(Some(AddressState::Good {address}));
                         } else if rez == "Method Not Allowed".to_string() {
-                            check_state_clone.set(Some(AddressState::NotGood {error1: "Wow thirsty dev...Please wait 30 minutes and try again".to_string()}));
+                            check_state_clone.set(Some(AddressState::NotGood {error1: "Wow thirsty dev...Please wait 1 hour and try again".to_string()}));
                         } else {
                             check_state_clone.set(Some(AddressState::NotGood {error1: "Something went wrong...Please try again".to_string()}));
                         }
