@@ -5,6 +5,8 @@ use gloo_net::http::*;
 
 use wasm_bindgen::prelude::*;
 
+//use futures::{try_join, select};
+
 use bech32::{self, FromBase32, ToBase32};
 use serde::{Deserialize, Serialize};
 
@@ -23,6 +25,10 @@ pub struct PostMessage {
     denom: String,
     address: String,
 }
+
+
+
+
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -46,16 +52,16 @@ pub fn app() -> Html {
                 address: check2,
             };
 
-            if let Ok(y) = JsValue::from_serde(&post) {
+            if let Ok(_) = JsValue::from_serde(&post) {
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
                     .json(&post).unwrap()
                     .header("Content-Security-Policy", "'self'")
                     .method(Method::POST);
 
                 wasm_bindgen_futures::spawn_local( async move {
+
                     if let Ok(x) = opts.send().await {
                         let rez = x.status_text();
-
                         if rez == "OK".to_string() {
                             check_state_clone.set(Some(AddressState::Good {address}));
                         } else if rez == "Method Not Allowed".to_string() {
@@ -63,7 +69,6 @@ pub fn app() -> Html {
                         } else {
                             check_state_clone.set(Some(AddressState::NotGood {error1: "Something went wrong...Please try again".to_string()}));
                         }
-
                     }
 
                 });
@@ -71,9 +76,7 @@ pub fn app() -> Html {
             }
 
         } else {
-
-            web_sys::console::log_1(&"hello".into());
-            check_state_clone.set(Some(AddressState::NotGood {error1: format!("{:?} /// {:?}", check1, check2)}));
+            check_state_clone.set(Some(AddressState::NotGood {error1: format!("{} /// {}", check1, check2)}));
             
         };
     });
@@ -81,7 +84,7 @@ pub fn app() -> Html {
     html! {
         <>
             <h1>{ "Juno Faucet" }</h1>
-            <h2>{ "Enter your testnet Juno address and click send" }</h2>
+            <h2>{ "drip drop gimme some junox" }</h2>
             <div class ="container">
                 <input ref={input_ref_outer.clone()} type="text" id="address" placeholder="juno1..." autocomplete="off" />
                 <button class ="button1" onclick={onclick}>{"Send"}</button>
@@ -91,7 +94,9 @@ pub fn app() -> Html {
             </div>
             <body>
             </body>
-        </>
+        
+           
+        </> 
     }
 }
 
@@ -104,9 +109,9 @@ pub struct ViewAddressProperties {
 fn view_response(props: &ViewAddressProperties) -> Html {
     let response = match &props.address {
         None => return html! {},
-        Some(AddressState::Good { address }) => format!("Funds sent to {:?}", address.clone()),
+        Some(AddressState::Good { address }) => format!("Funds sent to {}", address.clone()),
         Some(AddressState::NotGood { error1 }) => {
-            format!("{:?}", error1)
+            format!("{}", error1)
         }
     };
 
@@ -141,7 +146,7 @@ pub fn encode_decode(user_address: &str) -> String {
                             if check == user_address {
                                 return user_address.to_string();
                             } else {
-                                return "Error_1: decode/encode failed. Please enter a valid Juno address".to_string();
+                                return "Error_1: Decode/encode failed. Please enter a valid Juno address".to_string();
                             }
                         }
                     }

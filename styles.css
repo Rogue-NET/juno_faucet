@@ -60,7 +60,7 @@ h2 {
 }
 
 .button1:hover {
-    box-shadow: 0 0px 16px 0 rgb(255, 188, 106);
+    box-shadow: 0 0px 16px 0 #f0827d;
 }
 
 input[type=text] {
@@ -79,7 +79,7 @@ input[type=text] {
 }
 
 input[type=text]:focus {
-    box-shadow: 0 0px 16px 0 rgb(255, 188, 106);
+    box-shadow: 0 0px 16px 0 #f0827d;
 }
 
 input[type=text]::placeholder {
@@ -89,5 +89,12 @@ input[type=text]::placeholder {
 
 
 body {
-    background-image: url(images/faucet_bckgrd.png);
+    background: rgb(79, 79, 79);
+    background-size: cover;
 }
+
+
+
+
+
+

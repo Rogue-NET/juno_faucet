@@ -19,5 +19,8 @@ wasm-bindgen-futures = "0.4.31"
 
 
 [profile.release]
-debug = true
+opt-level = 'z'
+lto = true
+
+
 
