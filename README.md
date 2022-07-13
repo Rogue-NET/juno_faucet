@@ -1,5 +1,4 @@
 # juno_faucet
 
-### To Do
 
-Fix stuff
+to do: add readme 
