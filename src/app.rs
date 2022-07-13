@@ -10,10 +10,12 @@ use serde::{Deserialize, Serialize};
 
 pub const MAX_ADDRESS_LENGTH: usize = 255;
 
+
+
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AddressState {
     Good { address: String },
-    NotGood { error1: String, error2: String },
+    NotGood { error1: String },
 }
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
@@ -32,9 +34,11 @@ pub fn app() -> Html {
 
     let onclick = Callback::from(move |_| {
         let input = input_ref.cast::<HtmlInputElement>().unwrap();
+        let check_state_clone = check_state.clone();
         let address = input.value();
+
         let check1 = encode_decode(&address); 
-        let check2 = verify_length(&address); 
+        let check2 = verify_length(&address);
 
         if check1 == check2 {
             let post = PostMessage {
@@ -47,35 +51,32 @@ pub fn app() -> Html {
 
             if let Ok(y) = JsValue::from_serde(&post) {
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
+                    .json(&post).unwrap()
+                    .header("Content-Security-Policy", "'self'")
+                    .method(Method::POST);
 
-                    .method(Method::POST) // <<
-                    .body(zz) // << 413
-
-
-                    .header("Content-type", "application/json"); // <<< 400
-
-
-                    //.method(Method::POST)
-                    //.body(zz as JsValue);
-                    //.credentials(RequestCredentials::Include)
-                    //.mode(RequestMode::Cors);
-                    //.header("??content-type??", "application/json");
                 wasm_bindgen_futures::spawn_local( async move {
-                    opts.send().await.unwrap();
+                    if let Ok(x) = opts.send().await {
+                        let rez = x.status_text();
+
+                        if rez == "OK".to_string() {
+                            check_state_clone.set(Some(AddressState::Good {address}));
+                        } else if rez == "Method Not Allowed".to_string() {
+                            check_state_clone.set(Some(AddressState::NotGood {error1: "Wow thirsty dev...Please wait 30 minutes and try again".to_string()}));
+                        } else {
+                            check_state_clone.set(Some(AddressState::NotGood {error1: "Something went wrong...Please try again".to_string()}));
+                        }
+
+                    }
+
                 });
 
-
-                web_sys::console::log_1(&pyr);
-                web_sys::console::log_1(&"eeeeeeeee".into());
-
-
-                //check_state.set(Some(Address::Good {address}));
             }
 
         } else {
 
             web_sys::console::log_1(&"hello".into());
-            //check_state.set(Some(AddressState::NotGood {error1: "Parse Error".to_string(), error2: "Parse Error".to_string()}));
+            check_state_clone.set(Some(AddressState::NotGood {error1: format!("{:?} /// {:?}", check1, check2)}));
             
         };
     });
@@ -107,8 +108,8 @@ fn view_response(props: &ViewAddressProperties) -> Html {
     let response = match &props.address {
         None => return html! {},
         Some(AddressState::Good { address }) => format!("Funds sent to {:?}", address.clone()),
-        Some(AddressState::NotGood { error1, error2 }) => {
-            format!("{:?} /// {:?}", error1, error2)
+        Some(AddressState::NotGood { error1 }) => {
+            format!("{:?}", error1)
         }
     };
 
