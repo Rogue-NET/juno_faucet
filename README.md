@@ -6,7 +6,11 @@ A front end for the Junox faucet hosted [here](https://faucet.roguenet.io/)
 
 Could also be used as boilerplate for wasm web apps
 
-Powered by [Juno Network](https://twitter.com/junonetwork)
+Powered by [Juno Network](https://twitter.com/junonetwork) + [cosmjs](https://cosmos.github.io/cosmjs/)
+
+Web Server + CosmJS implementation by [Donkey](https://twitter.com/donkeydnky)
+
+Front end by [LeTurt](https://twitter.com/leturt_)
 
 #### Front end stack (Rust)
 
