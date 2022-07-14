@@ -8,7 +8,7 @@ Could also be used as boilerplate for wasm web apps
 
 Powered by [Juno Network](https://twitter.com/junonetwork) + [cosmjs](https://cosmos.github.io/cosmjs/)
 
-Web Server + CosmJS implementation by [Donkey](https://twitter.com/donkeydnky)
+Web Server + Cosmjs implementation by [Donkey](https://twitter.com/donkeydnky)
 
 Front end by [LeTurt](https://twitter.com/leturt_)
 
