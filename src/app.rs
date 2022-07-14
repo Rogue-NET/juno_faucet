@@ -18,6 +18,7 @@ pub const MAX_ADDRESS_LENGTH: usize = 255;
 pub enum AddressState {
     Good { address: String },
     NotGood { error1: String },
+    Processing { message: String },
 }
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
@@ -41,6 +42,7 @@ pub fn app() -> Html {
     let onclick = Callback::from(move |_| {
         let input = input_ref.cast::<HtmlInputElement>().unwrap();
         let check_state_clone = check_state.clone();
+        check_state_clone.set(Some(AddressState::Processing{ message: "Processing your request, usually takes about 10 seconds...".to_string()}));
         let address = input.value();
 
         let check1 = encode_decode(&address); 
@@ -95,10 +97,12 @@ pub fn app() -> Html {
             <body>
             </body>
             <div class ="footer">
-                <p>{ "Powered by:     "}
-                <a href="https://junonetwork.io/">{ "   Juno Network   "}</a>
+                <p>{ "Built by:     "}
+                <a href="https://twitter.com/roguenet_">{ "   RogueNET"}</a>
+                { "  | Powered by:     "}
+                <a href="https://junonetwork.io/">{ " Juno Network" }</a>
                 { "   +   " }
-                <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs  " }</a>
+                <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs" }</a>
                 </p>
             </div>
         
@@ -116,6 +120,7 @@ pub struct ViewAddressProperties {
 fn view_response(props: &ViewAddressProperties) -> Html {
     let response = match &props.address {
         None => return html! {},
+        Some(AddressState::Processing { message }) => format!("{}", message),
         Some(AddressState::Good { address }) => format!("Funds sent to {}", address.clone()),
         Some(AddressState::NotGood { error1 }) => {
             format!("{}", error1)

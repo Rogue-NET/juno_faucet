@@ -1,7 +1,6 @@
 # juno_faucet
 
-
-to do: async for "Processing your request..."
+to do: add spinner with "processing your request"
 
 to do: optimize .wasm size...its rough 
 
