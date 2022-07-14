@@ -124,10 +124,10 @@ body {
     left: 0;
     bottom: 0;
     width: 100%;
-    background: linear-gradient(-90deg, #ee7652eb, #e73c7ee3, #23a5d5e4, #23d5abe3);
+    background: linear-gradient(-90deg, #f0827d, #c471ed, #12c2e9);
     background-size: 400% 400%;
     animation: gradient;
-    animation-duration: 15s;
+    animation-duration: 10s;
     animation-timing-function: ease;
     animation-iteration-count: infinite;
     animation-direction: alternate;
@@ -155,6 +155,9 @@ a {
     text-shadow: 0 0 10px black, 0 0 5px black;
     font-weight: bolder;
 }
+
+
+
 
 
 
