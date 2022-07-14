@@ -23,7 +23,7 @@ Front end by [LeTurt](https://twitter.com/leturt_)
 
 ### Why?
 
-1) We saw need for an open junox faucet API in the ecosystem
+1) We saw a need for web testnet faucet in the ecosystem
 2) We put the faucet on a roguenet.io page to help spread awareness about our main project
 3) Builders gonna build
 ---
@@ -32,8 +32,8 @@ Front end by [LeTurt](https://twitter.com/leturt_)
 
 
 - You could use the app to get some testnet juno
-- You could fork this front end to use as boilerplate for a wasm web application (just rip out anything you don't need)
-- You could make your own front end & connect it to our faucet API (via basic HTTP posts)
+- You could fork this front end to use as boilerplate for a wasm web app (just rip out anything you don't need)
+- You could use this as a template for building your own faucet implementation
 ---
 
 
@@ -57,3 +57,5 @@ In the root of the repo you just cloned, run:
 
 Open a browser window & go to:
 > `http://127.0.0.1:8080/`
+
+**Note: Trying to use the faucet on your own local trunk build will not work. You will need to spin up an instance of the cosmjs faucet and change the url in main.rs**
