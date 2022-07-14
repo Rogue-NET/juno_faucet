@@ -42,14 +42,14 @@ Requirements
 - [Trunk](https://trunkrs.dev/) - Wasm web app bundler
 ---
 
-Set target
-`$ rustup target add wasm32-unknown-unknown`
+Set target:
+> `$ rustup target add wasm32-unknown-unknown`
 
-Clone this repo: `
-$ git clone https://github.com/LeTurt333/juno_faucet`
+Clone this repo: 
+> `$ git clone https://github.com/LeTurt333/juno_faucet`
 
-In the root of the repo you just cloned, run  
-`$ trunk serve`
+In the root of the repo you just cloned, run:
+> `$ trunk serve`
 
-Open a browser window & go to 
-`http://127.0.0.1:8080/`
+Open a browser window & go to:
+> `http://127.0.0.1:8080/`
