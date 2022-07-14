@@ -13,7 +13,6 @@ use serde::{Deserialize, Serialize};
 pub const MAX_ADDRESS_LENGTH: usize = 255;
 
 
-
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum AddressState {
     Good { address: String },
@@ -28,9 +27,6 @@ pub struct PostMessage {
 }
 
 
-
-
-
 #[function_component(App)]
 pub fn app() -> Html {
     let check_state = use_state_eq::<Option<AddressState>, _>(|| None);
@@ -42,10 +38,10 @@ pub fn app() -> Html {
     let onclick = Callback::from(move |_| {
         let input = input_ref.cast::<HtmlInputElement>().unwrap();
         let check_state_clone = check_state.clone();
-        check_state_clone.set(Some(AddressState::Processing{ message: "Processing your request, usually takes about 10 seconds...".to_string()}));
+        check_state_clone.set(Some(AddressState::Processing { message: "Processing your request, usually takes about 10 seconds...".to_string() }));
         let address = input.value();
 
-        let check1 = encode_decode(&address); 
+        let check1 = encode_decode(&address);
         let check2 = verify_length(&address);
 
         if check1 == check2 {
@@ -60,26 +56,21 @@ pub fn app() -> Html {
                     //.header("Content-Security-Policy", "'self'")
                     .method(Method::POST);
 
-                wasm_bindgen_futures::spawn_local( async move {
-
+                wasm_bindgen_futures::spawn_local(async move {
                     if let Ok(x) = opts.send().await {
                         let rez = x.status_text();
                         if rez == "OK".to_string() {
-                            check_state_clone.set(Some(AddressState::Good {address}));
+                            check_state_clone.set(Some(AddressState::Good { address }));
                         } else if rez == "Method Not Allowed".to_string() {
-                            check_state_clone.set(Some(AddressState::NotGood {error1: "Wow thirsty dev...Please wait 1 hour and try again".to_string()}));
+                            check_state_clone.set(Some(AddressState::NotGood { error1: "Wow thirsty dev...Please wait 1 hour and try again".to_string() }));
                         } else {
-                            check_state_clone.set(Some(AddressState::NotGood {error1: "Something went wrong...Please try again".to_string()}));
+                            check_state_clone.set(Some(AddressState::NotGood { error1: "Something went wrong...Please try again".to_string() }));
                         }
                     }
-
                 });
-
             }
-
         } else {
-            check_state_clone.set(Some(AddressState::NotGood {error1: format!("{} /// {}", check1, check2)}));
-            
+            check_state_clone.set(Some(AddressState::NotGood { error1: format!("{} /// {}", check1, check2) }));
         };
     });
 
@@ -87,17 +78,17 @@ pub fn app() -> Html {
         <>
             <h1>{ "Juno Faucet" }</h1>
             <h2>{ "drip drop gimme some junox" }</h2>
-            <div class ="container">
+            <div class="container">
                 <input ref={input_ref_outer.clone()} type="text" id="address" placeholder="juno1..." autocomplete="off" />
                 <button class ="button1" onclick={onclick}>{"Send"}</button>
             </div>
-            <div class ="response_container">
+            <div class="response_container">
             <ViewResponse address={(*check_state_outer).clone()} />
             </div>
             <body>
             </body>
-            <div class ="footer">
-                <p>{ "Built by:     "}
+            <div class="footer">
+                <p>{"Built by:     "}
                 <a href="https://twitter.com/roguenet_">{ "   RogueNET"}</a>
                 { "  | Powered by:     "}
                 <a href="https://junonetwork.io/">{ " Juno Network" }</a>
@@ -105,8 +96,6 @@ pub fn app() -> Html {
                 <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs" }</a>
                 </p>
             </div>
-        
-           
         </> 
     }
 }
