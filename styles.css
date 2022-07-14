@@ -83,7 +83,7 @@ h2 {
 }
 
 .button1:hover {
-    box-shadow: 0px 0px 18px 0 #ee7752;
+    box-shadow: 0px 0px 14px 0 #ffffff;
 }
 
 input[type=text] {
@@ -101,7 +101,7 @@ input[type=text] {
 }
 
 input[type=text]:focus {
-    box-shadow: 0px 0px 24px 0 #ee7752;
+    box-shadow: 0px 0px 14px 0 #ffffff;
     
 }
 
@@ -124,7 +124,7 @@ body {
     left: 0;
     bottom: 0;
     width: 100%;
-    background: linear-gradient(-90deg, #f0827d, #c471ed, #12c2e9);
+    background: linear-gradient(-90deg, #f0837dc6, #c471edc5, #12c2e9c1);
     background-size: 400% 400%;
     animation: gradient;
     animation-duration: 10s;
