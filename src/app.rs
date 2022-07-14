@@ -57,7 +57,7 @@ pub fn app() -> Html {
             if let Ok(_) = JsValue::from_serde(&post) {
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
                     .json(&post).unwrap()
-                    .header("Content-Security-Policy", "'self'")
+                    //.header("Content-Security-Policy", "'self'")
                     .method(Method::POST);
 
                 wasm_bindgen_futures::spawn_local( async move {
