@@ -1,4 +1,5 @@
 mod app;
+mod verify;
 
 use app::App;
 
