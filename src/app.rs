@@ -83,17 +83,16 @@ pub fn app() -> Html {
                 <button class ="button1" onclick={onclick}>{"Send"}</button>
             </div>
             <div class="response_container">
-            <ViewResponse address={(*check_state_outer).clone()} />
+                <ViewResponse address={(*check_state_outer).clone()} />
             </div>
-            <body>
-            </body>
+
             <div class="footer">
                 <p>{"Built by:     "}
-                <a href="https://twitter.com/roguenet_">{ "   RogueNET"}</a>
-                { "  | Powered by:     "}
-                <a href="https://junonetwork.io/">{ " Juno Network" }</a>
-                { "   +   " }
-                <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs" }</a>
+                    <a href="https://twitter.com/roguenet_">{ "   RogueNET"}</a>
+                    { "  | Powered by:     "}
+                    <a href="https://junonetwork.io/">{ " Juno Network" }</a>
+                    { "   +   " }
+                    <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs" }</a>
                 </p>
             </div>
         </> 
