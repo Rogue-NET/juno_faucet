@@ -21,16 +21,69 @@ pub struct PostMessage {
     address: String,
 }
 
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
+pub enum FundsState {
+    Available {amount: String },
+    NotEnough {amount: String},
+    Error {error_message: String},
+    Checking {msg: String},
+
+}
+
 #[function_component(App)]
 pub fn app() -> Html {
     let check_state = use_state_eq::<Option<AddressState>, _>(|| None);
     let check_state_outer = check_state.clone();
+
+    let check_funds = use_state_eq::<Option<FundsState>, _>(|| None);
+    let check_funds_outer = check_funds.clone();
 
     let check_button = use_state(|| false);
     let checker = use_state(|| true);
 
     let input_ref = NodeRef::default();
     let input_ref_outer = input_ref.clone();
+
+    let onclick_get = Callback::from(move |_| {
+
+        let check_funds_clone = check_funds.clone();
+        check_funds_clone.set(Some(FundsState::Checking{msg: "One sec...".to_string()}));
+
+        wasm_bindgen_futures::spawn_local(async move {
+
+            match Request::new("https://faucet-api.roguenet.io/status").method(Method::GET).send().await {
+                Ok(x) => match x.text().await {
+                    Ok(y) => {
+
+                        let z: Vec<_> = y.split('"').collect();
+                        let mut new_vec_rust = vec![];
+                        for slice in z {
+                            new_vec_rust.push(slice);
+                        };
+
+                        if ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000) > 20 {
+                            check_funds_clone.set(Some(FundsState::Available{amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000).to_string()}));
+                        } else {
+                            check_funds_clone.set(Some(FundsState::NotEnough{amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000).to_string()}));
+                        }
+
+                    },
+
+                    Err(_) => {
+                        check_funds_clone.set(Some(FundsState::Error{error_message: "Parse error, please try again".to_string()}));
+                    }
+                },
+
+                Err(_) => {
+                    check_funds_clone.set(Some(FundsState::Error{error_message: "No response from server, please try again".to_string()}));
+                }
+            }
+
+
+        });
+
+
+    });
 
     let onclick = Callback::from(move |_| {
         let check_state_clone = check_state.clone();
@@ -107,6 +160,10 @@ pub fn app() -> Html {
             <div class ="response_container">
                 <ViewResponse address={(*check_state_outer).clone()} />
             </div>
+            <div class ="container2" style="inline">
+                <ViewFunds funds={(*check_funds_outer).clone()} />
+                <button class="button2" onclick={onclick_get}>{"Status"}</button>
+            </div>
 
             <div class ="footer">
                 <p>{ "Built by:     "}
@@ -120,6 +177,26 @@ pub fn app() -> Html {
 
 
         </>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct ViewFundsAvailable {
+    funds: Option<FundsState>,
+}
+
+#[function_component(ViewFunds)]
+fn view_funds(funds: &ViewFundsAvailable) -> Html {
+    let funds_message = match &funds.funds {
+        None => return html! {},
+        Some(FundsState::Checking {msg}) => format!("{}", msg),
+        Some(FundsState::Available {amount}) => format!("Junox available is: {} ||| Time to get drippy", amount),
+        Some(FundsState::NotEnough {amount}) => format!("Junox available is: {} ||| Please wait until this is 20 or more", amount),
+        Some(FundsState::Error {error_message}) => format!("Error message: {}", error_message),
+    };
+
+    html! {
+        <div>{funds_message}</div>
     }
 }
 
