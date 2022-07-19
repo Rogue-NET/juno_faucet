@@ -35,6 +35,36 @@ pub fn app() -> Html {
     let check_state_outer = check_state.clone();
 
     let check_funds = use_state_eq::<Option<FundsState>, _>(|| None);
+    let check_funds_start = check_funds.clone();
+
+    wasm_bindgen_futures::spawn_local( async move {
+
+    if let Ok(x) = Request::new("https://faucet-api.roguenet.io/status").method(Method::GET).send().await {
+        match x.text().await {
+            Ok(y) => {
+                let z: Vec<_> = y.split('"').collect();
+
+                if ((z[35].parse::<i64>().unwrap()) / 1000000) > 20 {
+                    check_funds_start.set(Some(FundsState::Available {
+                        amount: ((z[35].parse::<i64>().unwrap()) / 1000000).to_string()}));
+                } else {
+                    check_funds_start.set(Some(FundsState::NotEnough{
+                        amount: ((z[35].parse::<i64>().unwrap()) / 1000000).to_string()}));
+                }
+            },
+            Err(_) => {
+                check_funds_start.set(Some(FundsState::Error {error_message: "Parse error, plz try again".to_string()}));
+            },
+
+        };
+    } else {
+
+        check_funds_start.set(Some(FundsState::Error {error_message: "Error connecting to server".to_string()}));
+    };
+    
+    });
+
+
     let check_funds_outer = check_funds.clone();
 
     let check_button = use_state(|| false);
@@ -42,6 +72,8 @@ pub fn app() -> Html {
 
     let input_ref = NodeRef::default();
     let input_ref_outer = input_ref.clone();
+
+    
 
     let onclick_get = Callback::from(move |_| {
         let check_funds_clone = check_funds.clone();
@@ -57,7 +89,7 @@ pub fn app() -> Html {
             {
                 Ok(x) => match x.text().await {
                     Ok(y) => {
-                        
+
                         let z: Vec<_> = y.split('"').collect();
 
                         if ((z[35].parse::<i64>().unwrap()) / 1000000) > 20 {
@@ -166,7 +198,7 @@ pub fn app() -> Html {
             </div>
             <div class ="container2" style="inline">
                 <ViewFunds funds={(*check_funds_outer).clone()} />
-                <button class="button2" onclick={onclick_get}>{"Status"}</button>
+                <button class="button2" onclick={onclick_get}>{"Refresh"}</button>
             </div>
 
             <div class ="footer">
@@ -195,10 +227,10 @@ fn view_funds(funds: &ViewFundsAvailable) -> Html {
         None => return html! {},
         Some(FundsState::Checking { msg }) => msg.to_string(),
         Some(FundsState::Available { amount }) => {
-            format!("Junox available is: {} ||| Time to get drippy", amount)
+            format!("Junox available: {} ||| Time to get drippy", amount)
         }
         Some(FundsState::NotEnough { amount }) => format!(
-            "Junox available is: {} ||| Please wait until this is 20 or more",
+            "Junox available: {} ||| Please wait until this is 20 or more",
             amount
         ),
         Some(FundsState::Error { error_message }) => format!("Error message: {}", error_message),
