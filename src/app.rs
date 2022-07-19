@@ -23,11 +23,10 @@ pub struct PostMessage {
 
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum FundsState {
-    Available {amount: String },
-    NotEnough {amount: String},
-    Error {error_message: String},
-    Checking {msg: String},
-
+    Available { amount: String },
+    NotEnough { amount: String },
+    Error { error_message: String },
+    Checking { msg: String },
 }
 
 #[function_component(App)]
@@ -45,44 +44,52 @@ pub fn app() -> Html {
     let input_ref_outer = input_ref.clone();
 
     let onclick_get = Callback::from(move |_| {
-
         let check_funds_clone = check_funds.clone();
-        check_funds_clone.set(Some(FundsState::Checking{msg: "One sec...".to_string()}));
+        check_funds_clone.set(Some(FundsState::Checking {
+            msg: "One sec...".to_string(),
+        }));
 
         wasm_bindgen_futures::spawn_local(async move {
-
-            match Request::new("https://faucet-api.roguenet.io/status").method(Method::GET).send().await {
+            match Request::new("https://faucet-api.roguenet.io/status")
+                .method(Method::GET)
+                .send()
+                .await
+            {
                 Ok(x) => match x.text().await {
                     Ok(y) => {
-
                         let z: Vec<_> = y.split('"').collect();
                         let mut new_vec_rust = vec![];
                         for slice in z {
                             new_vec_rust.push(slice);
-                        };
-
-                        if ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000) > 20 {
-                            check_funds_clone.set(Some(FundsState::Available{amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000).to_string()}));
-                        } else {
-                            check_funds_clone.set(Some(FundsState::NotEnough{amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000).to_string()}));
                         }
 
-                    },
+                        if ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000) > 20 {
+                            check_funds_clone.set(Some(FundsState::Available {
+                                amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000)
+                                    .to_string(),
+                            }));
+                        } else {
+                            check_funds_clone.set(Some(FundsState::NotEnough {
+                                amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000)
+                                    .to_string(),
+                            }));
+                        }
+                    }
 
                     Err(_) => {
-                        check_funds_clone.set(Some(FundsState::Error{error_message: "Parse error, please try again".to_string()}));
+                        check_funds_clone.set(Some(FundsState::Error {
+                            error_message: "Parse error, please try again".to_string(),
+                        }));
                     }
                 },
 
                 Err(_) => {
-                    check_funds_clone.set(Some(FundsState::Error{error_message: "No response from server, please try again".to_string()}));
+                    check_funds_clone.set(Some(FundsState::Error {
+                        error_message: "No response from server, please try again".to_string(),
+                    }));
                 }
             }
-
-
         });
-
-
     });
 
     let onclick = Callback::from(move |_| {
@@ -114,7 +121,7 @@ pub fn app() -> Html {
                 address: address.clone(),
             };
 
-            if let Ok(_) = JsValue::from_serde(&post) {
+            if JsValue::from_serde(&post).is_ok() {
                 let opts = Request::new("https://faucet-api.roguenet.io/credit")
                     .json(&post)
                     .unwrap()
@@ -127,9 +134,9 @@ pub fn app() -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     if let Ok(x) = opts.send().await {
                         let rez = x.status_text();
-                        if rez == "OK".to_string() {
+                        if rez == *"OK".to_string() {
                             check_state_clone.set(Some(AddressState::Good { address }));
-                        } else if rez == "Method Not Allowed".to_string() {
+                        } else if rez == *"Method Not Allowed".to_string() {
                             check_state_clone.set(Some(AddressState::NotGood {
                                 error1: "wow so thirsty...please wait 1 hour and try again"
                                     .to_string(),
@@ -189,10 +196,15 @@ pub struct ViewFundsAvailable {
 fn view_funds(funds: &ViewFundsAvailable) -> Html {
     let funds_message = match &funds.funds {
         None => return html! {},
-        Some(FundsState::Checking {msg}) => format!("{}", msg),
-        Some(FundsState::Available {amount}) => format!("Junox available is: {} ||| Time to get drippy", amount),
-        Some(FundsState::NotEnough {amount}) => format!("Junox available is: {} ||| Please wait until this is 20 or more", amount),
-        Some(FundsState::Error {error_message}) => format!("Error message: {}", error_message),
+        Some(FundsState::Checking { msg }) => msg.to_string(),
+        Some(FundsState::Available { amount }) => {
+            format!("Junox available is: {} ||| Time to get drippy", amount)
+        }
+        Some(FundsState::NotEnough { amount }) => format!(
+            "Junox available is: {} ||| Please wait until this is 20 or more",
+            amount
+        ),
+        Some(FundsState::Error { error_message }) => format!("Error message: {}", error_message),
     };
 
     html! {
@@ -209,11 +221,9 @@ pub struct ViewAddressProperties {
 fn view_response(props: &ViewAddressProperties) -> Html {
     let response = match &props.address {
         None => return html! {},
-        Some(AddressState::Processing { message }) => format!("{}", message),
+        Some(AddressState::Processing { message }) => message.to_string(),
         Some(AddressState::Good { address }) => format!("Funds sent to {}", address.clone()),
-        Some(AddressState::NotGood { error1 }) => {
-            format!("{}", error1)
-        }
+        Some(AddressState::NotGood { error1 }) => error1.to_string(),
     };
 
     html! {
