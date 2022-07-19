@@ -57,24 +57,21 @@ pub fn app() -> Html {
             {
                 Ok(x) => match x.text().await {
                     Ok(y) => {
+                        
                         let z: Vec<_> = y.split('"').collect();
-                        let mut new_vec_rust = vec![];
-                        for slice in z {
-                            new_vec_rust.push(slice);
-                        }
 
-                        if ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000) > 20 {
+                        if ((z[35].parse::<i64>().unwrap()) / 1000000) > 20 {
                             check_funds_clone.set(Some(FundsState::Available {
-                                amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000)
+                                amount: ((z[35].parse::<i64>().unwrap()) / 1000000)
                                     .to_string(),
                             }));
                         } else {
                             check_funds_clone.set(Some(FundsState::NotEnough {
-                                amount: ((new_vec_rust[35].parse::<i32>().unwrap()) / 1000000)
+                                amount: ((z[35].parse::<i64>().unwrap()) / 1000000)
                                     .to_string(),
                             }));
                         }
-                    }
+                    },
 
                     Err(_) => {
                         check_funds_clone.set(Some(FundsState::Error {
