@@ -135,7 +135,7 @@ pub fn app() -> Html {
                             check_state_clone.set(Some(AddressState::Good { address }));
                         } else if rez == *"Method Not Allowed".to_string() {
                             check_state_clone.set(Some(AddressState::NotGood {
-                                error1: "wow so thirsty...please wait 1 hour and try again"
+                                error1: "wow so thirsty...please wait 2 hours and try again"
                                     .to_string(),
                             }));
                         } else {
