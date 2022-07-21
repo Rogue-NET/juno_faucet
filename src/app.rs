@@ -1,33 +1,13 @@
 use crate::verify;
+use crate::state::*;
 
 use yew::prelude::*;
 
 use gloo_net::http::*;
 use web_sys::HtmlInputElement;
 
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
-pub enum AddressState {
-    Good { address: String },
-    NotGood { error1: String },
-    Processing { message: String },
-}
-
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
-pub struct PostMessage {
-    denom: String,
-    address: String,
-}
-
-#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
-pub enum FundsState {
-    Available { amount: String },
-    NotEnough { amount: String },
-    Error { error_message: String },
-    Checking { msg: String },
-}
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -53,7 +33,7 @@ pub fn app() -> Html {
                 }
             },
             Err(_) => {
-                check_funds_start.set(Some(FundsState::Error {error_message: "Parse error, plz try again".to_string()}));
+                check_funds_start.set(Some(FundsState::Error {error_message: "Parse error, please try again".to_string()}));
             },
 
         };
@@ -138,7 +118,7 @@ pub fn app() -> Html {
         };
 
         check_state_clone.set(Some(AddressState::Processing {
-            message: "Processing your request, usually takes about 10 seconds...".to_string(),
+            message: "⏳ Processing your request, usually takes about 10 seconds... ⏳".to_string(),
         }));
 
         let check1 = verify::encode_decode(&address);
@@ -167,7 +147,7 @@ pub fn app() -> Html {
                             check_state_clone.set(Some(AddressState::Good { address }));
                         } else if rez == *"Method Not Allowed".to_string() {
                             check_state_clone.set(Some(AddressState::NotGood {
-                                error1: "wow so thirsty...please wait 2 hours and try again"
+                                error1: "⏰ wow so thirsty...please wait 2 hours and try again ⏰"
                                     .to_string(),
                             }));
                         } else {
@@ -180,25 +160,25 @@ pub fn app() -> Html {
             }
         } else {
             check_state_clone.set(Some(AddressState::NotGood {
-                error1: format!("{} /// {}", check1, check2),
+                error1: format!("{} | {}", check1, check2),
             }));
         };
     });
 
     html! {
         <>
+            <div class ="container2" style="inline">
+                <button class ="button2" onclick={onclick_get}>{"Refresh"}</button>
+                <ViewFunds funds={(*check_funds_outer).clone()} />
+            </div>
             <h1>{ "Juno Faucet" }</h1>
             <h2>{ "drip drop gimme some junox" }</h2>
             <div class ="container">
                 <input ref={input_ref_outer.clone()} type="text" id="address" placeholder="juno1..." autocomplete="off" />
                 <button class ="button1" onclick={onclick}>{"Send"}</button>
-            </div>
-            <div class ="response_container">
-                <ViewResponse address={(*check_state_outer).clone()} />
-            </div>
-            <div class ="container2" style="inline">
-                <ViewFunds funds={(*check_funds_outer).clone()} />
-                <button class="button2" onclick={onclick_get}>{"Refresh"}</button>
+                <div class ="response_container">
+                    <ViewResponse address={(*check_state_outer).clone()} />
+                </div>
             </div>
 
             <div class ="footer">
@@ -210,15 +190,8 @@ pub fn app() -> Html {
                     <a href="https://github.com/cosmos/cosmjs">{ "  cosmjs" }</a>
                 </p>
             </div>
-
-
         </>
     }
-}
-
-#[derive(Properties, PartialEq)]
-pub struct ViewFundsAvailable {
-    funds: Option<FundsState>,
 }
 
 #[function_component(ViewFunds)]
@@ -227,13 +200,13 @@ fn view_funds(funds: &ViewFundsAvailable) -> Html {
         None => return html! {},
         Some(FundsState::Checking { msg }) => msg.to_string(),
         Some(FundsState::Available { amount }) => {
-            format!("Junox available: {} ||| Time to get drippy", amount)
+            format!("Junox available: {} ✅", amount)
         }
         Some(FundsState::NotEnough { amount }) => format!(
-            "Junox available: {} ||| Please wait until this is 20 or more",
+            "Junox available: {} ❌ Please wait until this is 20 or more",
             amount
         ),
-        Some(FundsState::Error { error_message }) => format!("Error message: {}", error_message),
+        Some(FundsState::Error { error_message }) => format!("Error ❌: {}", error_message),
     };
 
     html! {
@@ -241,17 +214,12 @@ fn view_funds(funds: &ViewFundsAvailable) -> Html {
     }
 }
 
-#[derive(Properties, PartialEq)]
-pub struct ViewAddressProperties {
-    address: Option<AddressState>,
-}
-
 #[function_component(ViewResponse)]
 fn view_response(props: &ViewAddressProperties) -> Html {
     let response = match &props.address {
         None => return html! {},
-        Some(AddressState::Processing { message }) => message.to_string(),
-        Some(AddressState::Good { address }) => format!("Funds sent to {}", address.clone()),
+        Some(AddressState::Processing { message }) => message.to_string(), //⏳
+        Some(AddressState::Good { address }) => format!("💧 Funds sent to {} 💧", address.clone()),
         Some(AddressState::NotGood { error1 }) => error1.to_string(),
     };
 
